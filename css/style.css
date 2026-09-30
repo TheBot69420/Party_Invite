@@ -1,0 +1,889 @@
+/* ==========================================================================
+   THE ROYAL INVITATION - TRUE 3D ENVELOPE (FRONT & BACK DESIGN)
+   Landscape Traditional Indian/Hindu Royal Ivory & Gold Aesthetics
+   ========================================================================== */
+
+:root {
+  --font-serif: 'Cinzel', 'Playfair Display', Georgia, serif;
+  --font-devanagari: 'Rozha One', 'Yatra One', 'Cinzel', serif;
+  --font-script: 'Great Vibes', cursive;
+  --font-sans: 'Marcellus', 'Cinzel', system-ui, sans-serif;
+
+  --gold-highlight: #fff6d6;
+  --gold-light: #fae19c;
+  --gold-primary: #d4af37;
+  --gold-medium: #b38927;
+  --gold-dark: #7a5410;
+  
+  --bg-dark: #03050c;
+  --bg-ambient: radial-gradient(circle at 50% 48%, #141c33 0%, #0c1224 40%, #060914 75%, #03040a 100%);
+  --ivory-bg: #f9f5eb;
+  --ivory-dark: #efe5d0;
+  --text-dark: #26160d;
+
+  /* 3D Envelope & Inner Card Dimensions (Default Desktop) */
+  --env-w: 720px;
+  --env-h: 402px;
+  --card-w: 336px;
+  --card-h: calc(var(--card-w) * (1024 / 602));
+  --edge-t: 16px;
+  --seal-size: 82px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-dark);
+  color: #fff;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: var(--bg-ambient);
+}
+
+/* Ambient Gold Particles Canvas */
+#particles-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Vignette Overlay */
+.vignette-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 48%, transparent 40%, rgba(2, 3, 8, 0.82) 100%);
+  z-index: 2;
+}
+
+/* ==========================================================================
+   HEADER HUD
+   ========================================================================== */
+.header-hud {
+  position: relative;
+  z-index: 50;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.brand-crest {
+  font-family: var(--font-devanagari);
+  font-size: 0.92rem;
+  letter-spacing: 3px;
+  color: var(--gold-light);
+  text-shadow: 0 0 12px rgba(250, 225, 156, 0.5);
+  margin-bottom: 2px;
+}
+
+.brand-title {
+  font-family: var(--font-serif);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff 0%, #fae19c 60%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.7));
+}
+
+.brand-subtitle {
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: #d1b894;
+  margin-top: 2px;
+}
+
+.status-pill {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 16px;
+  background: rgba(26, 6, 11, 0.75);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--gold-light);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e6a817;
+  box-shadow: 0 0 8px #f5c042;
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+.pulse-dot.active {
+  background: #4ade80;
+  box-shadow: 0 0 10px #4ade80;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.4); opacity: 1; }
+}
+
+/* Floating Tooltip */
+.floating-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  padding: 6px 14px;
+  background: rgba(20, 4, 8, 0.92);
+  border: 1px solid var(--gold-primary);
+  border-radius: 18px;
+  color: var(--gold-light);
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 12px rgba(212, 175, 55, 0.3);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.floating-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   MAIN SCENE CONTAINER (3D Perspective Space)
+   ========================================================================== */
+.scene-container {
+  position: relative;
+  width: 100%;
+  max-width: 860px;
+  height: 540px;
+  z-index: 10;
+  perspective: 1600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto 0;
+}
+
+/* ==========================================================================
+   ATMOSPHERIC SPOTLIGHT GLOW (Makes 3D Envelope Pop)
+   ========================================================================== */
+.scene-spotlight-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateZ(-80px);
+  width: min(880px, 94vw);
+  height: min(580px, 68vh);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(250, 225, 156, 0.32) 0%, rgba(212, 175, 55, 0.15) 38%, rgba(20, 28, 55, 0.05) 60%, transparent 75%);
+  filter: blur(48px);
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.8s ease;
+}
+
+/* ==========================================================================
+   THE 3D ENVELOPE ASSEMBLY
+   ========================================================================== */
+.envelope-assembly {
+  position: relative;
+  width: var(--env-w);
+  height: var(--env-h);
+  transform-style: preserve-3d;
+}
+
+/* Floor Contact Shadow */
+.envelope-shadow {
+  position: absolute;
+  bottom: -32px;
+  left: 6%;
+  width: 88%;
+  height: 46px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.9) 0%, rgba(10, 16, 35, 0.45) 50%, transparent 75%);
+  border-radius: 50%;
+  z-index: 0;
+  filter: blur(12px);
+  pointer-events: none;
+  transition: transform 0.8s ease, opacity 0.8s ease;
+}
+
+/* ==========================================================================
+   3D PHYSICAL ENVELOPE BOX (Shell with Front, Back, & Paper Thickness)
+   ========================================================================== */
+.envelope-3d-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+/* 3D Paper Thickness Edges */
+.envelope-edge {
+  position: absolute;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #dfcfb2 0%, #c5b290 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  pointer-events: none;
+}
+
+.edge-left {
+  top: 0;
+  left: calc(var(--edge-t) / -2);
+  width: var(--edge-t);
+  height: 100%;
+  transform: rotateY(-90deg);
+}
+
+.edge-right {
+  top: 0;
+  right: calc(var(--edge-t) / -2);
+  width: var(--edge-t);
+  height: 100%;
+  transform: rotateY(90deg);
+}
+
+.edge-bottom {
+  bottom: calc(var(--edge-t) / -2);
+  left: 0;
+  width: 100%;
+  height: var(--edge-t);
+  transform: rotateX(-90deg);
+}
+
+/* Common Envelope Faces */
+.envelope-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: 
+    0 25px 65px rgba(0, 0, 0, 0.85),
+    0 8px 24px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(212, 175, 55, 0.35);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.envelope-asset-img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+}
+
+/* --- FRONT FACE (media_1790006540190.png: INVITATION / हार्दिक निमन्त्रणा) --- */
+.face-front {
+  background: var(--ivory-bg);
+  transform: translateZ(8px);
+  overflow: hidden;
+  z-index: 5;
+}
+
+.envelope-shimmer-sheen {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 246, 214, 0.35), transparent);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  animation: gold-sheen 6s infinite ease-in-out;
+}
+
+@keyframes gold-sheen {
+  0%, 80% { left: -100%; }
+  100% { left: 160%; }
+}
+
+/* Front Flip Hint Badge */
+.front-flip-badge {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  background: rgba(26, 8, 12, 0.85);
+  border: 1px solid var(--gold-primary);
+  border-radius: 20px;
+  color: var(--gold-light);
+  font-family: var(--font-serif);
+  font-size: 0.7rem;
+  letter-spacing: 1.2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 10;
+}
+
+.front-flip-badge:hover {
+  background: rgba(45, 12, 20, 0.95);
+  transform: translateX(-50%) scale(1.05);
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.6);
+}
+
+.flip-icon {
+  font-size: 0.85rem;
+  color: var(--gold-light);
+}
+
+/* --- BACK FACE (media_1790006549972.png: Flap & Ganesha Wax Seal) --- */
+.face-back {
+  background: var(--ivory-bg);
+  transform: rotateY(180deg) translateZ(8px);
+  transform-style: preserve-3d;
+  overflow: visible;
+  z-index: 2;
+  transition: box-shadow 0.4s ease;
+}
+
+.envelope-assembly.is-open .envelope-face {
+  box-shadow: none;
+}
+
+.envelope-assembly.is-open .envelope-edge {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+/* Envelope Back Pocket (Covers bottom & sides) */
+.envelope-pocket-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 8px;
+  overflow: hidden;
+  clip-path: polygon(0 0, 44% 49%, 50% 64%, 56% 49%, 100% 0, 100% 100%, 0 100%);
+  -webkit-clip-path: polygon(0 0, 44% 49%, 50% 64%, 56% 49%, 100% 0, 100% 100%, 0 100%);
+}
+
+/* 3D Triangular Flap */
+.envelope-3d-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  transform-origin: top center;
+  transform-style: preserve-3d;
+}
+
+.flap-side {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flap-front {
+  z-index: 2;
+  transform: rotateX(0deg);
+}
+
+.flap-cut-container {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(0 0, 100% 0, 50% 55.6%);
+  -webkit-clip-path: polygon(0 0, 100% 0, 50% 55.6%);
+}
+
+/* Metallic Ganesha Wax Seal */
+.wax-seal {
+  position: absolute;
+  top: 55.6%;
+  left: 50%;
+  width: var(--seal-size);
+  height: var(--seal-size);
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+}
+
+
+
+.wax-seal-body {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fae6a6 0%, #d4af37 40%, #8c671b 80%, #543909 100%);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.85),
+    0 0 16px rgba(212, 175, 55, 0.5),
+    inset 0 2px 5px rgba(255, 255, 255, 0.75),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.wax-seal-rim {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(42, 14, 5, 0.5);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 30%, #ebd391 0%, #c29c2d 65%, #7a5210 100%);
+}
+
+.ganesha-seal-svg {
+  width: 75%;
+  height: 75%;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+}
+
+.wax-glow-halo {
+  position: absolute;
+  top: -22%;
+  left: -22%;
+  width: 144%;
+  height: 144%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(250, 225, 156, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+  animation: halo-pulse 2.5s infinite ease-in-out;
+}
+
+/* Back of Flap (Rotated 180deg around Y to maintain natural triangle apex) */
+.flap-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #eee3cd 0%, #dfcfb2 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 55.6%);
+  -webkit-clip-path: polygon(0 0, 100% 0, 50% 55.6%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flap-back-content {
+  color: var(--gold-medium);
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  letter-spacing: 4px;
+}
+
+/* ==========================================================================
+   THE INNER INVITATION CARD (Manish Pokharel & Sudha Aryal Royal Card)
+   ========================================================================== */
+.inner-card-3d {
+  position: absolute;
+  top: 10px;
+  left: calc(50% - (var(--card-w) / 2));
+  width: var(--card-w);
+  height: var(--card-h);
+  z-index: 25;
+  transform: rotateY(180deg) translateZ(0px);
+  transform-style: preserve-3d;
+  opacity: 0;
+  pointer-events: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.inner-card-3d.active {
+  pointer-events: auto;
+  cursor: zoom-in;
+  z-index: 30;
+}
+
+.inner-card-3d.active .portrait-card-container {
+  box-shadow: 
+    0 30px 70px rgba(0, 0, 0, 0.95),
+    0 0 35px rgba(212, 175, 55, 0.5),
+    0 0 12px rgba(255, 246, 214, 0.25);
+  transition: box-shadow 0.6s ease;
+}
+
+.portrait-card-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 602 / 1024;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 25px rgba(212, 175, 55, 0.4);
+  border: 2px solid rgba(212, 175, 55, 0.65);
+  background: #fbf7ee;
+}
+
+.portrait-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.card-shimmer-sheen {
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 246, 214, 0.28), rgba(212, 175, 55, 0.15), transparent);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Clickable Venue Location Hotspot: Opens Google Maps link */
+.venue-location-link {
+  position: absolute;
+  top: 53.0%;
+  left: 53.0%;
+  width: 38.0%;
+  height: 12.0%;
+  z-index: 10;
+  cursor: pointer;
+  border-radius: 8px;
+  text-decoration: none;
+  display: block;
+  -webkit-tap-highlight-color: rgba(212, 175, 55, 0.35);
+  transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.venue-location-link:hover,
+.venue-location-link:focus-visible {
+  background: rgba(212, 175, 55, 0.12);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.45), inset 0 0 8px rgba(212, 175, 55, 0.25);
+  border: 1px dashed rgba(184, 134, 11, 0.65);
+  outline: none;
+}
+
+/* ==========================================================================
+   BOTTOM TOOLBAR (Minimalist Luxury 2-Button Control)
+   ========================================================================== */
+.bottom-toolbar {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(10, 15, 30, 0.85);
+  padding: 8px 20px;
+  border-radius: 30px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 20px rgba(212, 175, 55, 0.25);
+  backdrop-filter: blur(14px);
+}
+
+.btn-luxury {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: #e0d0b8;
+  font-family: var(--font-serif);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-luxury:hover:not(:disabled) {
+  background: rgba(212, 175, 55, 0.18);
+  border-color: var(--gold-light);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
+}
+
+.btn-luxury:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-luxury.primary {
+  background: linear-gradient(135deg, #d4af37 0%, #a37217 100%);
+  border-color: var(--gold-light);
+  color: #1a0408;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.45);
+}
+
+.btn-luxury.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f0cf62 0%, #b8831e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.65);
+}
+
+.btn-luxury.active {
+  border-color: var(--gold-light);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+}
+
+/* ==========================================================================
+   RESPONSIVE ADJUSTMENTS: MOBILE PHONE & 9:16 PORTRAIT RATIO
+   ========================================================================== */
+@media (max-width: 768px), (max-aspect-ratio: 13/16) {
+  :root {
+    --env-w: min(84vw, calc((100dvh - 220px) * 0.54), 324px);
+    --env-h: calc(var(--env-w) * 0.5586);
+    --card-w: calc(var(--env-w) * 0.72);
+    --card-h: calc(var(--card-w) * 1.8215);
+    --edge-t: 10px;
+    --seal-size: 60px;
+  }
+
+  body {
+    touch-action: pan-y;
+  }
+
+  #app {
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+
+  /* Compact Header HUD */
+  .header-hud {
+    padding: 10px 14px 4px;
+    gap: 1px;
+    z-index: 60;
+  }
+
+  .brand-crest {
+    font-size: 0.62rem;
+    letter-spacing: 1.5px;
+  }
+
+  .brand-title {
+    font-size: 1.38rem;
+    letter-spacing: 2px;
+    margin: 1px 0;
+  }
+
+  .brand-subtitle {
+    font-size: 0.68rem;
+    letter-spacing: 0.8px;
+  }
+
+  .status-pill {
+    font-size: 0.62rem;
+    padding: 3px 10px;
+    margin-top: 3px;
+    letter-spacing: 0.6px;
+  }
+
+  /* Scene Container */
+  .scene-container {
+    height: auto;
+    flex: 1;
+    min-height: 440px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Front cover hint badge */
+  .front-flip-badge {
+    bottom: 10px;
+    padding: 4px 14px;
+    font-size: 0.62rem;
+    letter-spacing: 1px;
+  }
+
+  /* Inner Card on Mobile */
+  .inner-card-3d {
+    border-radius: 10px;
+  }
+
+  .portrait-card-container {
+    border-radius: 10px;
+    border-width: 1.5px;
+  }
+
+  /* Mobile Bottom Toolbar (Touch 2-Button Row) */
+  .bottom-toolbar {
+    width: calc(100% - 24px);
+    max-width: 360px;
+    margin-bottom: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 4px;
+    z-index: 50;
+  }
+
+  .btn-luxury {
+    padding: 11px 12px;
+    font-size: 0.72rem;
+    letter-spacing: 0.8px;
+    justify-content: center;
+    border-radius: 24px;
+    min-height: 44px;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .btn-luxury svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+}
+
+
+/* ==========================================================================
+   CARD FULLSCREEN ZOOM LIGHTBOX MODAL
+   ========================================================================== */
+.card-lightbox-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.card-lightbox-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 3, 5, 0.88);
+  backdrop-filter: blur(14px);
+  cursor: pointer;
+}
+
+.lightbox-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 92vh;
+  max-width: 92vw;
+}
+
+.lightbox-close-btn {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1a0408;
+  border: 1.5px solid var(--gold-primary);
+  color: var(--gold-light);
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 0 10px rgba(212, 175, 55, 0.4);
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.lightbox-close-btn:hover {
+  background: #330b13;
+  color: #fff;
+  border-color: var(--gold-highlight);
+  transform: scale(1.1);
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.7);
+}
+
+.lightbox-card-wrapper {
+  position: relative;
+  height: min(88vh, 880px);
+  aspect-ratio: 602 / 1024;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95), 0 0 45px rgba(212, 175, 55, 0.5);
+  border: 2.5px solid var(--gold-primary);
+  background: #fbf7ee;
+  transform-origin: 50% 50%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.lightbox-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+

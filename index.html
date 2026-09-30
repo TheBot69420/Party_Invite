@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Manish &amp; Sudha Wedding Invitation | 3D Envelope &amp; Royal Card</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Google Fonts for Vedic Serif & Devanagari Elegance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Great+Vibes&family=Marcellus&family=Rozha+One&family=Yatra+One&display=swap" rel="stylesheet">
+  <!-- GSAP Animation Platform -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Ambient Gold Dust Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Ambient Vignette Effect -->
+    <div class="vignette-overlay"></div>
+
+
+
+    <!-- Main Scene Container (3D Perspective Space) -->
+    <main class="scene-container" id="scene-container">
+      
+      <!-- Atmospheric Backdrop Glow Spotlight (Makes envelope pop) -->
+      <div class="scene-spotlight-glow" id="scene-glow"></div>
+
+      <!-- THE TRUE 3D ENVELOPE ASSEMBLY -->
+      <div class="envelope-assembly" id="envelope">
+        <!-- Floor Contact Shadow -->
+        <div class="envelope-shadow" id="envelope-shadow"></div>
+
+        <!-- 3D Physical Box / Shell with Front, Back & Paper Thickness -->
+        <div class="envelope-3d-box" id="envelope-3d-box">
+          
+          <!-- 3D Paper Thickness Edges -->
+          <div class="envelope-edge edge-left"></div>
+          <div class="envelope-edge edge-right"></div>
+          <div class="envelope-edge edge-bottom"></div>
+
+          <!-- ========================================================
+               FRONT FACE OF 3D ENVELOPE (media_1790006540190.png)
+               "INVITATION / हार्दिक निमन्त्रणा" & Lord Ganesha
+               ======================================================== -->
+          <div class="envelope-face face-front" id="face-front">
+            <img src="assets/card-front.png" alt="Envelope Front - Invitation" class="envelope-asset-img" />
+            <div class="envelope-shimmer-sheen"></div>
+
+          </div>
+
+
+
+          <!-- ========================================================
+               BACK FACE OF 3D ENVELOPE (media_1790006549972.png)
+               Triangular Flap & Metallic Ganesha Wax Seal
+               ======================================================== -->
+          <div class="envelope-face face-back" id="face-back">
+            
+            <!-- Envelope Back Pocket (Covers bottom & sides) -->
+            <div class="envelope-pocket-wrap">
+              <img src="assets/envelope-back.png" alt="Envelope Back Pocket" class="envelope-asset-img pocket-cut" />
+            </div>
+
+            <!-- 3D Triangular Flap (Hinged at top edge, swings open 160deg) -->
+            <div class="envelope-3d-flap" id="envelope-flap">
+              <!-- Front Face of Flap with Ganesha Seal -->
+              <div class="flap-side flap-front">
+                <div class="flap-cut-container">
+                  <img src="assets/envelope-back.png" alt="Envelope Flap" class="envelope-asset-img" />
+                </div>
+                
+                <!-- Metallic Ganesha Wax Seal (Click to Open!) -->
+                <div class="wax-seal" id="wax-seal" role="button" aria-label="Open 3D Invitation Envelope">
+                  <div class="wax-glow-halo"></div>
+                  <div class="wax-seal-body">
+                    <div class="wax-seal-rim">
+                      <svg viewBox="0 0 100 100" class="ganesha-seal-svg">
+                        <defs>
+                          <linearGradient id="ganeshaGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fff4c2" />
+                            <stop offset="35%" stop-color="#fae19c" />
+                            <stop offset="70%" stop-color="#d4af37" />
+                            <stop offset="100%" stop-color="#8a6114" />
+                          </linearGradient>
+                        </defs>
+                        <!-- Lord Ganesha Silhouette Emboss -->
+                        <path d="M50 16 C45 16 42 20 42 24 C42 28 45 32 50 32 C55 32 58 28 58 24 C58 20 55 16 50 16 Z" fill="url(#ganeshaGold)" />
+                        <!-- Crown (Mukut) -->
+                        <path d="M44 20 L50 8 L56 20 Z" fill="url(#ganeshaGold)" />
+                        <circle cx="50" cy="7" r="1.5" fill="#fff5cc" />
+                        <!-- Ears -->
+                        <path d="M42 22 C34 22 28 26 28 32 C28 38 34 42 41 42" stroke="url(#ganeshaGold)" stroke-width="2.2" fill="none" stroke-linecap="round" />
+                        <path d="M58 22 C66 22 72 26 72 32 C72 38 66 42 59 42" stroke="url(#ganeshaGold)" stroke-width="2.2" fill="none" stroke-linecap="round" />
+                        <!-- Head & Curved Trunk (Vakratunda) -->
+                        <path d="M47 30 C47 36 49 44 49 52 C49 62 44 68 38 68 C34 68 32 64 34 61 C36 58 40 60 41 62" stroke="url(#ganeshaGold)" stroke-width="3" fill="none" stroke-linecap="round" />
+                        <!-- Modak & Hand -->
+                        <circle cx="62" cy="58" r="4.5" fill="url(#ganeshaGold)" />
+                        <!-- Tusk (Ekadanta) -->
+                        <path d="M45 42 L39 44" stroke="url(#ganeshaGold)" stroke-width="2.2" stroke-linecap="round" />
+                        <!-- Tilak on forehead -->
+                        <path d="M50 18 L50 25" stroke="#fff4c2" stroke-width="1.8" stroke-linecap="round" />
+                        <circle cx="50" cy="26.5" r="1.2" fill="#d4af37" />
+                        <!-- Base Lotus Petals -->
+                        <path d="M36 78 C42 74 58 74 64 78 C58 84 42 84 36 78 Z" fill="url(#ganeshaGold)" opacity="0.85" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Back Face of Flap (Visible when rotated open 160deg into 3D depth) -->
+              <div class="flap-side flap-back">
+                <div class="flap-back-content">
+                  <div class="flap-back-crest">✦ &nbsp; ॐ &nbsp; ✦</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ========================================================
+               THE INNER INVITATION CARD (Positioned in front of envelope & flap)
+               Manish Pokharel & Sudha Aryal Royal Card
+               ======================================================== -->
+          <div class="inner-card-3d" id="inner-card">
+            <div class="portrait-card-container">
+              <!-- High-res wedding card asset -->
+              <img src="assets/inner-card.png" alt="Manish Pokharel &amp; Sudha Aryal Wedding Invitation" class="portrait-card-img" />
+              <div class="card-shimmer-sheen"></div>
+
+              <!-- Clickable Venue Hotspot: Opens Google Maps link directly -->
+              <a href="https://maps.app.goo.gl/5cLbY6xXjAzk1YE78" 
+                 target="_blank" 
+                 rel="noopener noreferrer" 
+                 class="venue-location-link" 
+                 id="venue-link-card" 
+                 title="Open Venue on Google Maps (Raj Mahal Event, Pokhara)" 
+                 aria-label="Open venue location on Google Maps: Raj Mahal Event, Devi's Falls, Pokhara">
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+
+
+    <!-- Card Zoom Lightbox Modal (Click to View Full Size) -->
+    <div class="card-lightbox-modal" id="card-lightbox" aria-modal="true" role="dialog">
+      <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+      <div class="lightbox-container">
+        <button class="lightbox-close-btn" id="btn-close-lightbox" aria-label="Close Lightbox">✕</button>
+        <div class="lightbox-card-wrapper">
+          <img src="assets/inner-card.png" alt="Manish &amp; Sudha Wedding Card Full Resolution" class="lightbox-card-img" />
+          <div class="card-shimmer-sheen"></div>
+          <!-- Clickable Venue Hotspot in Lightbox Zoom: Opens Google Maps link directly -->
+          <a href="https://maps.app.goo.gl/5cLbY6xXjAzk1YE78" 
+             target="_blank" 
+             rel="noopener noreferrer" 
+             class="venue-location-link" 
+             id="venue-link-lightbox" 
+             title="Open Venue on Google Maps (Raj Mahal Event, Pokhara)" 
+             aria-label="Open venue location on Google Maps: Raj Mahal Event, Devi's Falls, Pokhara">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Bundle -->
+  <script src="js/bundle.js"></script>
+</body>
+</html>

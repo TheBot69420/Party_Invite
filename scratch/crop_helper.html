@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { margin: 0; background: #fff; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<canvas id="crop"></canvas>
+<script>
+window.cropText = function(imgSrc) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.getElementById('crop');
+      // Crop around "Manish Pokharel" and "Sudha Aryal"
+      // Normalized coordinates: x: 15% to 85%, y: 22% to 45%
+      const sx = img.naturalWidth * 0.15;
+      const sy = img.naturalHeight * 0.22;
+      const sw = img.naturalWidth * 0.70;
+      const sh = img.naturalHeight * 0.25;
+
+      c.width = sw;
+      c.height = sh;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+      resolve(c.toDataURL('image/png'));
+    };
+    img.src = imgSrc;
+  });
+};
+</script>
+</body>
+</html>
