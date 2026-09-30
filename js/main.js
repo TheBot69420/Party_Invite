@@ -164,10 +164,27 @@ window.addEventListener('DOMContentLoaded', () => {
       isEnvelopeFlipped = true;
       gsap.to(envelope3dBox, {
         rotateY: 180,
-        duration: 0.85,
+        duration: 0.9,
         ease: 'power3.inOut'
       });
-      startDelay = 0.75;
+      gsap.to(envelope3dBox, {
+        z: 32,
+        duration: 0.45,
+        ease: 'power2.out',
+        yoyo: true,
+        repeat: 1
+      });
+      if (envelopeShadow) {
+        gsap.to(envelopeShadow, {
+          scaleX: 0.88,
+          opacity: 0.6,
+          duration: 0.45,
+          ease: 'power2.out',
+          yoyo: true,
+          repeat: 1
+        });
+      }
+      startDelay = 0.8;
     }
 
     const cardLightbox = document.getElementById('card-lightbox');
@@ -206,37 +223,53 @@ window.addEventListener('DOMContentLoaded', () => {
       ease: 'power2.out'
     }, startDelay);
 
-    // 2. Triangular flap swings open into 3D depth (-180deg) behind envelope
+    tl.to(waxSeal, {
+      scale: 1.0,
+      duration: 0.25,
+      ease: 'power1.out'
+    }, startDelay + 0.35);
+
+    // 2. Flap triangle peels open: apex retracts from 65.5% toward top edge (0%)
+    // Pure clip-path animation — no 3D rotation, no coordinate system issues
+    gsap.set(envelopeFlap, { clipPath: 'polygon(0% 0%, 100% 0%, 50% 65.5%)' });
     tl.to(envelopeFlap, {
-      rotateX: -180,
-      duration: 1.15,
-      ease: 'power3.inOut'
-    }, startDelay + 0.15);
+      clipPath: 'polygon(0% 0%, 100% 0%, 50% 0%)',
+      duration: 0.9,
+      ease: 'power2.inOut'
+    }, startDelay + 0.25);
+
+    // Wax seal fades out as flap peels open
+    tl.to(waxSeal, {
+      opacity: 0,
+      scale: 0.7,
+      duration: 0.3,
+      ease: 'power2.in'
+    }, startDelay + 0.35);
 
     // 3. Card emerges out of the envelope pocket and expands continuously into full screen!
-    // No automatic popup timer, no delay!
+    // Waits until flap has swung past vertical (-115deg) so pocket opening is clearly revealed!
     tl.to(lightboxCardWrapper, {
       y: 0,
       scale: 1.0,
       opacity: 1,
-      duration: 1.35,
+      duration: 1.25,
       ease: 'power3.out'
-    }, startDelay + 0.38);
+    }, startDelay + 0.68);
 
-    // Backdrop dims background smoothly
+    // Backdrop dims background smoothly alongside card
     tl.to(lightboxBackdrop, {
       opacity: 1,
-      duration: 1.25,
+      duration: 1.15,
       ease: 'power2.out'
-    }, startDelay + 0.38);
+    }, startDelay + 0.68);
 
-    // Envelope settles downward subtly
+    // Envelope settles downward subtly as card expands
     tl.to(envelope, {
       y: isMobile ? 65 : 90,
       scale: 0.86,
-      duration: 1.2,
+      duration: 1.15,
       ease: 'power3.out'
-    }, startDelay + 0.38);
+    }, startDelay + 0.68);
 
     // Close button appears gracefully
     tl.to(btnCloseLightbox, {
@@ -244,14 +277,14 @@ window.addEventListener('DOMContentLoaded', () => {
       scale: 1.0,
       duration: 0.4,
       ease: 'back.out(1.5)'
-    }, startDelay + 1.15);
+    }, startDelay + 1.45);
 
     // Regal golden shimmer sheen sweep across the card
     if (cardSheen) {
       tl.fromTo(cardSheen,
         { left: '-120%' },
         { left: '160%', duration: 1.2, ease: 'power2.inOut' },
-        startDelay + 0.7
+        startDelay + 1.05
       );
     }
 
@@ -323,23 +356,57 @@ window.addEventListener('DOMContentLoaded', () => {
       }, 0);
     }
 
-    // 2. Triangular flap folds shut
+    // 2. Flap triangle folds back shut: apex expands from 0% back to 65.5%
     tl.to(envelopeFlap, {
-      rotateX: 0,
-      duration: 0.8,
-      ease: 'power3.inOut'
-    }, 0.7);
+      clipPath: 'polygon(0% 0%, 100% 0%, 50% 65.5%)',
+      duration: 0.85,
+      ease: 'power2.inOut'
+    }, 0.65);
 
-    // 3. Ganesha wax seal snaps into place
-    tl.fromTo(waxSeal, {
-      scale: 1.25,
-      rotation: 6
-    }, {
+    // Wax seal reappears as flap closes
+    tl.to(waxSeal, {
+      opacity: 1,
+      scale: 1.15,
+      duration: 0.25,
+      ease: 'power2.out'
+    }, 1.35);
+
+    // 3. Ganesha wax seal snaps into place as flap lands shut
+    tl.to(waxSeal, {
       scale: 1.0,
       rotation: 0,
-      duration: 0.3,
+      duration: 0.32,
       ease: 'back.out(2)'
-    }, 1.45);
+    }, 1.6);
+
+    // 4. Smoothly turn envelope back to front face once sealed
+    tl.to(envelope3dBox, {
+      rotateY: 0,
+      duration: 0.85,
+      ease: 'power3.inOut',
+      onStart: () => {
+        isEnvelopeFlipped = false;
+      }
+    }, 1.82);
+
+    tl.to(envelope3dBox, {
+      z: 28,
+      duration: 0.42,
+      ease: 'power2.out',
+      yoyo: true,
+      repeat: 1
+    }, 1.85);
+
+    if (envelopeShadow) {
+      tl.to(envelopeShadow, {
+        scaleX: 0.88,
+        opacity: 0.6,
+        duration: 0.42,
+        ease: 'power2.out',
+        yoyo: true,
+        repeat: 1
+      }, 1.85);
+    }
 
     return tl;
   }
@@ -430,11 +497,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
   // Interaction Triggers:
-  // 1. Clicking the front face flips the envelope to the back (revealing the Ganesha wax seal)
+  // 1. Clicking the front of the card/envelope turns it around in 3D and automatically breaks the seal & opens into fullscreen!
   if (faceFront) {
     faceFront.addEventListener('click', (e) => {
-      if (currentState === STATES.SEALED && !isEnvelopeFlipped) {
-        flipEnvelope();
+      e.stopPropagation();
+      if (currentState === STATES.SEALED) {
+        openSequence();
+      }
+    });
+  }
+
+  // Also catch clicks anywhere on the envelope box when front-facing
+  if (envelope3dBox) {
+    envelope3dBox.addEventListener('click', (e) => {
+      if (currentState !== STATES.SEALED) return;
+      if (!isEnvelopeFlipped) {
+        openSequence();
       }
     });
   }
